@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:4000"],
+  origin: ["http://localhost:5173", import.meta.env.VITE_BLOG_API_URL],
   credentials: true,
   optionsSuccessStatus: 200,
 };
