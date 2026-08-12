@@ -147,7 +147,7 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                        @click="deleteBlog(blog)"
+                        @click="confirmDeleteBlog(blog)"
                       >
                         <i class="bi bi-trash me-1"></i>Delete
                       </button>
@@ -231,6 +231,59 @@
         </div>
       </div>
     </section>
+
+    <!-- Delete confirmation modal -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      aria-hidden="true"
+      ref="deleteModalEl"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content delete-modal-content border-0">
+          <div class="modal-body text-center p-4 pt-5">
+            <div
+              class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center warning-icon"
+            >
+              <i class="bi bi-trash3"></i>
+            </div>
+
+            <h5 class="fw-bold mb-2">Delete this post?</h5>
+            <p class="text-muted mb-0">
+              <span class="fw-semibold text-body">{{
+                blogToDelete?.title
+              }}</span>
+              will be permanently removed. This can't be undone.
+            </p>
+          </div>
+
+          <div class="modal-footer border-0 p-4 pt-0 gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-secondary rounded-pill flex-fill"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger rounded-pill flex-fill d-flex align-items-center justify-content-center gap-2"
+              :disabled="isDeleting"
+              @click="deleteBlog"
+            >
+              <span
+                v-if="isDeleting"
+                class="spinner-border spinner-border-sm"
+                role="status"
+              ></span>
+              <i v-else class="bi bi-trash3"></i>
+              {{ isDeleting ? "Deleting..." : "Delete" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -239,6 +292,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Notyf } from "notyf";
 import axios from "axios";
+import { Modal } from "bootstrap";
 
 import { useUserStore } from "../stores/user";
 
@@ -250,6 +304,11 @@ const users = ref([]);
 const blogs = ref([]);
 const isLoading = ref(true);
 const activeTab = ref("posts");
+
+const deleteModalEl = ref(null);
+const blogToDelete = ref(null);
+const isDeleting = ref(false);
+let deleteModal = null;
 
 const adminCount = computed(() => users.value.filter((u) => u.isAdmin).length);
 
@@ -310,10 +369,17 @@ function toggleAdmin(targetUser) {
     });
 }
 
-function deleteBlog(blog) {
-  if (!confirm(`Delete "${blog.title}"? This can't be undone.`)) return;
+function confirmDeleteBlog(blog) {
+  blogToDelete.value = blog;
+  deleteModal.show();
+}
 
+function deleteBlog() {
+  if (!blogToDelete.value) return;
+
+  isDeleting.value = true;
   const token = localStorage.getItem("token");
+  const blog = blogToDelete.value;
 
   axios
     .delete(`${import.meta.env.VITE_BLOG_API_URL}blogs/${blog._id}`, {
@@ -322,10 +388,14 @@ function deleteBlog(blog) {
     .then(() => {
       blogs.value = blogs.value.filter((b) => b._id !== blog._id);
       notyf.success("Post deleted.");
+      deleteModal.hide();
     })
     .catch((error) => {
       console.error("Failed to delete post:", error);
       notyf.error("Could not delete post.");
+    })
+    .finally(() => {
+      isDeleting.value = false;
     });
 }
 
@@ -353,6 +423,11 @@ onMounted(() => {
   isLoading.value = true;
   Promise.all([fetchUsers(), fetchBlogs()]).finally(() => {
     isLoading.value = false;
+  });
+
+  deleteModal = new Modal(deleteModalEl.value);
+  deleteModalEl.value.addEventListener("hidden.bs.modal", () => {
+    blogToDelete.value = null;
   });
 });
 </script>
@@ -430,5 +505,17 @@ onMounted(() => {
   height: 28px;
   font-size: 0.65rem;
   background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+
+.delete-modal-content {
+  border-radius: 1rem;
+}
+
+.warning-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  font-size: 1.6rem;
 }
 </style>
