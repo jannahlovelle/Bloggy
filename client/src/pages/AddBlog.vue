@@ -4,14 +4,24 @@
   >
     <div class="row w-100 justify-content-center">
       <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-        <div class="card shadow border-0">
+        <div class="card form-card shadow-sm border-0">
           <div class="card-body p-4 p-md-5">
             <div class="text-center mb-4">
+              <div
+                class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 header-icon"
+              >
+                <i class="bi bi-pencil-square"></i>
+              </div>
               <h1 class="fw-bold mb-2">Write a Post</h1>
               <p class="text-muted mb-0">Share what's on your mind</p>
             </div>
 
-            <div v-if="errorMessage" class="alert alert-danger" role="alert">
+            <div
+              v-if="errorMessage"
+              class="alert alert-danger d-flex align-items-center gap-2"
+              role="alert"
+            >
+              <i class="bi bi-exclamation-circle-fill"></i>
               {{ errorMessage }}
             </div>
 
@@ -31,7 +41,7 @@
                 />
               </div>
 
-              <div class="mb-4">
+              <div class="mb-2">
                 <label for="content" class="form-label fw-semibold">
                   Content
                 </label>
@@ -46,6 +56,12 @@
                 ></textarea>
               </div>
 
+              <div class="text-end mb-4">
+                <small class="text-muted">
+                  {{ content.length }} characters
+                </small>
+              </div>
+
               <div class="d-flex gap-2">
                 <button
                   type="button"
@@ -57,9 +73,15 @@
 
                 <button
                   type="submit"
-                  class="btn btn-primary btn-lg flex-fill"
+                  class="btn btn-primary btn-lg flex-fill d-flex align-items-center justify-content-center gap-2"
                   :disabled="!isActive || isLoading"
                 >
+                  <span
+                    v-if="isLoading"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                  ></span>
+                  <i v-else class="bi bi-send-fill"></i>
                   {{ isLoading ? "Publishing..." : "Publish" }}
                 </button>
               </div>
@@ -123,3 +145,30 @@ function createPost() {
     });
 }
 </script>
+
+<style scoped>
+.form-card {
+  border-radius: 1rem;
+}
+
+.header-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+  color: white;
+  font-size: 1.4rem;
+}
+
+.form-control {
+  border-radius: 0.6rem;
+}
+
+.form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
+.btn-lg {
+  border-radius: 0.6rem;
+}
+</style>

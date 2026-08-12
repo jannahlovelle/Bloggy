@@ -6,6 +6,7 @@ import router from "./router";
 
 import "bootswatch/dist/yeti/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "notyf/notyf.min.css";
 
 const app = createApp(App);

@@ -2,11 +2,10 @@
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-3 mb-4 mb-lg-0">
-        <div class="card shadow-sm border-0">
+        <div class="card profile-card shadow-sm border-0 sticky-lg-top">
           <div class="card-body p-4 text-center">
             <div
-              class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center mx-auto mb-3"
-              style="width: 72px; height: 72px; font-size: 1.5rem"
+              class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center mx-auto mb-3 avatar-xl"
             >
               {{ initials(user.username) }}
             </div>
@@ -16,16 +15,19 @@
 
             <span
               v-if="user.isAdmin"
-              class="badge bg-primary-subtle text-primary"
+              class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2"
             >
-              Admin
+              <i class="bi bi-shield-check me-1"></i>Admin
             </span>
 
-            <hr class="my-4" />
+            <hr class="my-4 opacity-25" />
 
-            <div class="text-start">
-              <p class="text-muted small mb-1">Posts</p>
-              <p class="fw-semibold mb-0">{{ blogs.length }}</p>
+            <div class="d-flex align-items-center justify-content-center gap-2">
+              <i class="bi bi-file-earmark-text text-primary"></i>
+              <div class="text-start">
+                <p class="text-muted small mb-0 lh-1">Posts</p>
+                <p class="fw-semibold mb-0">{{ blogs.length }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -42,7 +44,11 @@
 
         <div v-else-if="blogs.length === 0" class="text-center py-5">
           <p class="text-muted fs-5 mb-0">You haven't written anything yet.</p>
-          <router-link to="/blogs/create" class="btn btn-primary mt-3">
+          <router-link
+            to="/blogs/create"
+            class="btn btn-primary mt-3 d-inline-flex align-items-center gap-2"
+          >
+            <i class="bi bi-pencil-square"></i>
             Write your first post
           </router-link>
         </div>
@@ -51,13 +57,12 @@
           <div
             v-for="blog in blogs"
             :key="blog._id"
-            class="card shadow-sm border-0 mb-4"
+            class="card blog-card shadow-sm border-0 mb-4"
           >
             <div class="card-body p-4">
-              <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="d-flex align-items-center gap-3 mb-3">
                 <div
-                  class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
-                  style="width: 40px; height: 40px"
+                  class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0 avatar"
                 >
                   {{ initials(blog.author?.username) }}
                 </div>
@@ -66,7 +71,7 @@
                   <p class="fw-semibold mb-0 lh-1">
                     {{ blog.author?.username || "Unknown" }}
                   </p>
-                  <p class="text-muted small mb-0">
+                  <p class="text-muted small mb-0 mt-1">
                     {{ formatDate(blog.createdAt) }}
                   </p>
                 </div>
@@ -75,43 +80,46 @@
               <h2 class="h4 fw-bold mb-2">
                 <router-link
                   :to="`/blogs/${blog._id}`"
-                  class="text-decoration-none text-body"
+                  class="text-decoration-none text-body title-link"
                 >
                   {{ blog.title }}
                 </router-link>
               </h2>
 
-              <p class="mb-3">{{ excerpt(blog.content) }}</p>
+              <p class="mb-3 text-secondary">{{ excerpt(blog.content) }}</p>
 
-              <div class="d-flex align-items-center gap-3">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary disabled"
+              <hr class="mb-3 opacity-25" />
+
+              <div class="d-flex align-items-center gap-2">
+                <span
+                  class="btn btn-sm btn-outline-primary rounded-pill px-3 disabled"
                 >
-                  Like
+                  <i class="bi bi-heart"></i>
                   <span class="ms-1">{{ blog.likes?.length || 0 }}</span>
-                </button>
+                </span>
 
                 <router-link
                   :to="`/blogs/${blog._id}`"
-                  class="btn btn-sm btn-outline-secondary"
+                  class="btn btn-sm btn-outline-secondary rounded-pill px-3"
                 >
                   Read more
                 </router-link>
 
                 <router-link
                   :to="`/blogs/${blog._id}/edit`"
-                  class="btn btn-sm btn-outline-secondary ms-auto"
+                  class="btn btn-sm btn-outline-secondary rounded-circle ms-auto icon-btn"
+                  title="Edit"
                 >
-                  Edit
+                  <i class="bi bi-pencil"></i>
                 </router-link>
 
                 <button
                   type="button"
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm btn-outline-danger rounded-circle icon-btn"
+                  title="Delete"
                   @click="deleteBlog(blog)"
                 >
-                  Delete
+                  <i class="bi bi-trash"></i>
                 </button>
               </div>
             </div>
@@ -216,3 +224,45 @@ onMounted(() => {
   });
 });
 </script>
+
+<style scoped>
+.profile-card,
+.blog-card {
+  border-radius: 1rem;
+}
+
+.sticky-lg-top {
+  top: 1.5rem;
+}
+
+.avatar-xl {
+  width: 72px;
+  height: 72px;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+
+.title-link {
+  transition: color 0.15s ease;
+}
+
+.title-link:hover {
+  color: var(--bs-primary) !important;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+</style>

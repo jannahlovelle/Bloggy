@@ -4,9 +4,10 @@
       <div class="col-12 col-lg-8">
         <router-link
           to="/"
-          class="text-muted text-decoration-none d-inline-block mb-4"
+          class="text-muted text-decoration-none d-inline-flex align-items-center gap-1 mb-4 back-link"
         >
-          &larr; Back to posts
+          <i class="bi bi-arrow-left"></i>
+          Back to posts
         </router-link>
 
         <div v-if="isLoading" class="text-center py-5">
@@ -21,12 +22,11 @@
 
         <section v-else>
           <!-- post item  -->
-          <div class="card shadow-sm border-0 mb-4">
+          <div class="card content-card shadow-sm border-0 mb-4">
             <div class="card-body p-4 p-md-5">
-              <div class="d-flex align-items-center gap-2 mb-4">
+              <div class="d-flex align-items-center gap-3 mb-4">
                 <div
-                  class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
-                  style="width: 40px; height: 40px"
+                  class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0 avatar-lg"
                 >
                   {{ initials(blog.author?.username) }}
                 </div>
@@ -35,7 +35,7 @@
                   <p class="fw-semibold mb-0 lh-1">
                     {{ blog.author?.username || "Unknown" }}
                   </p>
-                  <p class="text-muted small mb-0">
+                  <p class="text-muted small mb-0 mt-1">
                     {{ formatDate(blog.createdAt) }}
                   </p>
                 </div>
@@ -43,18 +43,26 @@
 
               <h1 class="fw-bold mb-4">{{ blog.title }}</h1>
 
-              <p class="mb-4" style="white-space: pre-wrap">
+              <p
+                class="mb-4 text-secondary content-text"
+                style="white-space: pre-wrap"
+              >
                 {{ blog.content }}
               </p>
+
+              <hr class="mb-4 opacity-25" />
 
               <div class="d-flex align-items-center gap-3">
                 <button
                   type="button"
-                  class="btn btn-sm"
+                  class="btn btn-sm rounded-pill px-3 like-btn"
                   :class="isLikedByUser ? 'btn-primary' : 'btn-outline-primary'"
                   @click="toggleLike"
                 >
-                  {{ isLikedByUser ? "Liked" : "Like" }}
+                  <i
+                    class="bi"
+                    :class="isLikedByUser ? 'bi-heart-fill' : 'bi-heart'"
+                  ></i>
                   <span class="ms-1">{{ blog.likes?.length || 0 }}</span>
                 </button>
               </div>
@@ -62,9 +70,10 @@
           </div>
 
           <!-- comments section -->
-          <div class="card shadow-sm border-0">
+          <div class="card content-card shadow-sm border-0">
             <div class="card-body p-4 p-md-5">
-              <h2 class="h5 fw-bold mb-4">
+              <h2 class="h5 fw-bold mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-chat-left-text text-primary"></i>
                 Comments <span class="text-muted">({{ comments.length }})</span>
               </h2>
 
@@ -83,9 +92,15 @@
 
                 <button
                   type="submit"
-                  class="btn btn-primary btn-sm"
+                  class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2"
                   :disabled="newComment.trim() === '' || isSubmitting"
                 >
+                  <span
+                    v-if="isSubmitting"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                  ></span>
+                  <i v-else class="bi bi-send-fill"></i>
                   {{ isSubmitting ? "Posting..." : "Post Comment" }}
                 </button>
               </form>
@@ -107,11 +122,10 @@
                 <div
                   v-for="comment in comments"
                   :key="comment._id"
-                  class="d-flex gap-2 mb-3"
+                  class="d-flex gap-2 mb-3 comment-item p-2 rounded-3"
                 >
                   <div
-                    class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
-                    style="width: 32px; height: 32px; font-size: 0.75rem"
+                    class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0 avatar-sm"
                   >
                     {{ initials(comment.author?.username) }}
                   </div>
@@ -120,7 +134,9 @@
                     <p class="fw-semibold mb-0 lh-1">
                       {{ comment.author?.username || "Unknown" }}
                     </p>
-                    <p class="mb-0">{{ comment.comment }}</p>
+                    <p class="mb-0 mt-1 text-secondary">
+                      {{ comment.comment }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -253,3 +269,55 @@ onMounted(() => {
   });
 });
 </script>
+
+<style scoped>
+.back-link {
+  transition:
+    gap 0.15s ease,
+    color 0.15s ease;
+}
+
+.back-link:hover {
+  gap: 0.5rem !important;
+  color: var(--bs-primary) !important;
+}
+
+.content-card {
+  border-radius: 1rem;
+}
+
+.avatar-lg {
+  width: 48px;
+  height: 48px;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.7rem;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+
+.content-text {
+  line-height: 1.75;
+  font-size: 1.05rem;
+}
+
+.like-btn {
+  transition: transform 0.15s ease;
+}
+
+.like-btn:active {
+  transform: scale(0.95);
+}
+
+.comment-item {
+  transition: background-color 0.15s ease;
+}
+
+.comment-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+</style>

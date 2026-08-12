@@ -2,7 +2,10 @@
   <div class="container py-5">
     <div class="row justify-content-center mb-4">
       <div class="col-12 col-lg-10">
-        <h1 class="fw-bold mb-1">Admin Dashboard</h1>
+        <h1 class="fw-bold mb-1 d-flex align-items-center gap-2">
+          <i class="bi bi-speedometer2 text-primary"></i>
+          Admin Dashboard
+        </h1>
         <p class="text-muted mb-0">Overview of all users and posts</p>
       </div>
     </div>
@@ -18,37 +21,57 @@
         <div class="col-12 col-lg-10">
           <div class="row g-3">
             <div class="col-6 col-md-3">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                  <p class="text-muted small mb-1">Total Users</p>
-                  <p class="h3 fw-bold mb-0">{{ users.length }}</p>
+              <div class="card stat-card border-0 shadow-sm">
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                  <div class="stat-icon stat-icon-primary">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div>
+                    <p class="text-muted small mb-1">Total Users</p>
+                    <p class="h4 fw-bold mb-0">{{ users.length }}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="col-6 col-md-3">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                  <p class="text-muted small mb-1">Total Posts</p>
-                  <p class="h3 fw-bold mb-0">{{ blogs.length }}</p>
+              <div class="card stat-card border-0 shadow-sm">
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                  <div class="stat-icon stat-icon-info">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                  </div>
+                  <div>
+                    <p class="text-muted small mb-1">Total Posts</p>
+                    <p class="h4 fw-bold mb-0">{{ blogs.length }}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="col-6 col-md-3">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                  <p class="text-muted small mb-1">Admins</p>
-                  <p class="h3 fw-bold mb-0">{{ adminCount }}</p>
+              <div class="card stat-card border-0 shadow-sm">
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                  <div class="stat-icon stat-icon-warning">
+                    <i class="bi bi-shield-check"></i>
+                  </div>
+                  <div>
+                    <p class="text-muted small mb-1">Admins</p>
+                    <p class="h4 fw-bold mb-0">{{ adminCount }}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="col-6 col-md-3">
-              <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                  <p class="text-muted small mb-1">Total Likes</p>
-                  <p class="h3 fw-bold mb-0">{{ totalLikes }}</p>
+              <div class="card stat-card border-0 shadow-sm">
+                <div class="card-body p-3 d-flex align-items-center gap-3">
+                  <div class="stat-icon stat-icon-danger">
+                    <i class="bi bi-heart-fill"></i>
+                  </div>
+                  <div>
+                    <p class="text-muted small mb-1">Total Likes</p>
+                    <p class="h4 fw-bold mb-0">{{ totalLikes }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -58,30 +81,33 @@
 
       <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
-          <ul class="nav nav-tabs mb-3">
+          <ul class="nav nav-pills mb-3 gap-2">
             <li class="nav-item">
               <button
                 type="button"
-                class="nav-link"
+                class="nav-link d-flex align-items-center gap-2"
                 :class="{ active: activeTab === 'posts' }"
                 @click="activeTab = 'posts'"
               >
-                Posts
+                <i class="bi bi-file-earmark-text"></i>Posts
               </button>
             </li>
             <li class="nav-item">
               <button
                 type="button"
-                class="nav-link"
+                class="nav-link d-flex align-items-center gap-2"
                 :class="{ active: activeTab === 'users' }"
                 @click="activeTab = 'users'"
               >
-                Users
+                <i class="bi bi-people"></i>Users
               </button>
             </li>
           </ul>
 
-          <div v-if="activeTab === 'posts'" class="card border-0 shadow-sm">
+          <div
+            v-if="activeTab === 'posts'"
+            class="card table-card border-0 shadow-sm"
+          >
             <div class="table-responsive">
               <table class="table table-hover align-middle mb-0">
                 <thead>
@@ -98,21 +124,32 @@
                     <td>
                       <router-link
                         :to="`/blogs/${blog._id}`"
-                        class="text-decoration-none"
+                        class="text-decoration-none fw-semibold row-link"
                       >
                         {{ blog.title }}
                       </router-link>
                     </td>
-                    <td>{{ blog.author?.username || "Unknown" }}</td>
-                    <td>{{ formatDate(blog.createdAt) }}</td>
-                    <td>{{ blog.likes?.length || 0 }}</td>
+                    <td class="text-secondary">
+                      {{ blog.author?.username || "Unknown" }}
+                    </td>
+                    <td class="text-secondary">
+                      {{ formatDate(blog.createdAt) }}
+                    </td>
+                    <td>
+                      <span
+                        class="d-inline-flex align-items-center gap-1 text-secondary"
+                      >
+                        <i class="bi bi-heart-fill text-danger small"></i>
+                        {{ blog.likes?.length || 0 }}
+                      </span>
+                    </td>
                     <td class="text-end">
                       <button
                         type="button"
-                        class="btn btn-sm btn-outline-danger"
+                        class="btn btn-sm btn-outline-danger rounded-pill px-3"
                         @click="deleteBlog(blog)"
                       >
-                        Delete
+                        <i class="bi bi-trash me-1"></i>Delete
                       </button>
                     </td>
                   </tr>
@@ -128,7 +165,10 @@
             </p>
           </div>
 
-          <div v-if="activeTab === 'users'" class="card border-0 shadow-sm">
+          <div
+            v-if="activeTab === 'users'"
+            class="card table-card border-0 shadow-sm"
+          >
             <div class="table-responsive">
               <table class="table table-hover align-middle mb-0">
                 <thead>
@@ -141,24 +181,35 @@
                 </thead>
                 <tbody>
                   <tr v-for="u in users" :key="u._id">
-                    <td>{{ u.username }}</td>
-                    <td>{{ u.email }}</td>
+                    <td class="d-flex align-items-center gap-2">
+                      <span
+                        class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center avatar-xs"
+                      >
+                        {{ initials(u.username) }}
+                      </span>
+                      <span class="fw-semibold">{{ u.username }}</span>
+                    </td>
+                    <td class="text-secondary">{{ u.email }}</td>
                     <td>
                       <span
-                        class="badge"
+                        class="badge rounded-pill px-3 py-2"
                         :class="
                           u.isAdmin
                             ? 'bg-primary-subtle text-primary'
                             : 'bg-secondary-subtle text-secondary'
                         "
                       >
+                        <i
+                          class="bi me-1"
+                          :class="u.isAdmin ? 'bi-shield-check' : 'bi-person'"
+                        ></i>
                         {{ u.isAdmin ? "Admin" : "User" }}
                       </span>
                     </td>
                     <td class="text-end">
                       <button
                         type="button"
-                        class="btn btn-sm btn-outline-secondary"
+                        class="btn btn-sm btn-outline-secondary rounded-pill px-3"
                         :disabled="u._id === userStore.user.id"
                         @click="toggleAdmin(u)"
                       >
@@ -278,6 +329,11 @@ function deleteBlog(blog) {
     });
 }
 
+function initials(username) {
+  if (!username) return "?";
+  return username.slice(0, 2).toUpperCase();
+}
+
 function formatDate(dateString) {
   if (!dateString) return "";
   return new Date(dateString).toLocaleDateString(undefined, {
@@ -300,3 +356,79 @@ onMounted(() => {
   });
 });
 </script>
+
+<style scoped>
+.stat-card,
+.table-card {
+  border-radius: 1rem;
+}
+
+.stat-card {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06) !important;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stat-icon-primary {
+  background: rgba(var(--bs-primary-rgb), 0.12);
+  color: var(--bs-primary);
+}
+
+.stat-icon-info {
+  background: rgba(13, 202, 240, 0.12);
+  color: #0dcaf0;
+}
+
+.stat-icon-warning {
+  background: rgba(255, 193, 7, 0.15);
+  color: #d39e00;
+}
+
+.stat-icon-danger {
+  background: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+}
+
+.nav-pills .nav-link {
+  border-radius: 2rem;
+  color: var(--bs-body-color);
+  font-weight: 500;
+  padding: 0.5rem 1.1rem;
+}
+
+.nav-pills .nav-link.active {
+  background: var(--bs-primary);
+}
+
+.row-link {
+  color: var(--bs-body-color);
+  transition: color 0.15s ease;
+}
+
+.row-link:hover {
+  color: var(--bs-primary);
+}
+
+.avatar-xs {
+  width: 28px;
+  height: 28px;
+  font-size: 0.65rem;
+  background: linear-gradient(135deg, var(--bs-primary), #6ea8fe);
+}
+</style>
