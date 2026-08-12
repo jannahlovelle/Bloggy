@@ -57,6 +57,10 @@
                   type="button"
                   class="btn btn-sm rounded-pill px-3 like-btn"
                   :class="isLikedByUser ? 'btn-primary' : 'btn-outline-primary'"
+                  :disabled="userStore.user.isAdmin"
+                  :title="
+                    userStore.user.isAdmin ? 'Admins cannot like posts' : ''
+                  "
                   @click="toggleLike"
                 >
                   <i
